@@ -98,12 +98,10 @@
             // Add more image URLs as needed
         ];
 
-        function drawCard() {
-            
-
+        function drawCard(customLink) {
             const randomIndex = Math.floor(Math.random() * tarotCards.length);
             const card = tarotCards[randomIndex];
-            
+
             const cardImage = document.getElementById("card-image");
             const cardName = document.getElementById("card-name");
             const cardMeaning = document.getElementById("card-meaning");
@@ -112,18 +110,19 @@
             cardName.innerText = card.name;
             cardMeaning.innerText = card.meaning;
 
-            openPopup();
-            
-        }   
+            openPopup(customLink);
+        }
+
         
         function closePopup() {
             const popup = document.getElementById("popup-modal");
             popup.style.display = "none";
         }
         
-        function openPopup() {
+        function openPopup(customLink) {
             const popup = document.getElementById("popup-modal");
             const randomImage = document.getElementById("random-image");
+            const customImageLink = document.getElementById("custom-image-link");
 
             // Select a random image URL
             const randomIndex = Math.floor(Math.random() * randomImages.length);
@@ -132,9 +131,13 @@
             // Set the image source
             randomImage.src = selectedImage;
 
+            // Set the custom link
+            customImageLink.href = customLink;
+
             // Display the popup
             popup.style.display = "block";
         }
+
     </script>
 </head>
 <body>
@@ -150,8 +153,8 @@
         <div class="modal-content">
             <span class="close" onclick="closePopup()">&times;</span>
             <!-- Ad content goes here -->
-            <a href="https://minekapde.com/">
-                <img id="random-image" src="" alt="Mine Kapde">
+            <a id="custom-image-link" href="#" target="_blank">
+                <img id="random-image" src="" alt="Ad Image">
             </a>
         </div>
     </div>
