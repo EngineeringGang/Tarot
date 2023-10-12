@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Card Reading</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        #tarot-card {
+            width: 200px;
+            height: 350px;
+            margin: 20px auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #card-image {
+            width: 100%;
+            height: 80%;
+        }
+
+        #card-name {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        #card-meaning {
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* Styles for the Popup Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        const tarotCards = [
+            { name: "The Fool", image: "https://drive.google.com/uc?export=view&id=11V6Z3CICcduB0aU-6xHs1vEEjY7EUD6k", meaning: "Yes or No - Yes, but proceed with caution \n Points - New beginnings, innocence, adventure \n Detailed Reading - The Fool card in the Tarot represents the beginning of a fresh journey, marked by innocence, spontaneity, and the courage to take a leap of faith into the unknown. It signifies a willingness to embrace new experiences, unconventional paths, and the belief that change can bring positive growth. When reversed, it advises caution but still encourages openness to opportunities with a balanced approach. This card embodies the idea that life's adventures are best enjoyed with childlike wonder and an optimistic perspective." },
+            { name: "The Magician", image: "https://drive.google.com/uc?export=view&id=1PwU9xPL6iiEP46kjIdogM5AHxQFziaJI", meaning: "Yes or No - Yes\nPoints - Manifestation, Power, Skill\nDetailed Reading - The Magician card represents the power of transformation and manifestation. When this card appears in a reading, it suggests that you have the ability to turn your desires into reality. You have the skills and tools at your disposal to make things happen. It's a positive sign that your goals can be achieved through your determination and focus. However, it also reminds you to use your power wisely and ethically, as it can be a double-edged sword. The Magician encourages you to take action and make things happen in your life." },
+            { name: "The High Priestess", image: "https://drive.google.com/uc?export=view&id=1gPm6ryyVog4cxv91stLmJIfCIltQmi5O", meaning: "Yes or No - Yes\nPoints - Intuition, Mystery, Secrets\nDetailed Reading - The High Priestess card embodies intuition and the mysteries of the subconscious mind. When this card appears in a reading, it signifies a deep connection to your inner wisdom and a need to trust your instincts. It suggests that there are hidden or secret aspects to the situation at hand. The High Priestess encourages you to explore your intuition and pay attention to your dreams and inner thoughts. It may also indicate a time of waiting or contemplation, as not all answers are readily available. Trust in your inner knowing and let it guide you on your spiritual journey." },
+            { name: "The Empress", image: "https://drive.google.com/uc?export=view&id=15XqffnMz1sNjZ2VousE0OsF9SMHaLAOy", meaning: "Yes or No - Yes\nPoints - Fertility, Nurturing, Abundance\nDetailed Reading - The Empress card represents fertility, nurturing, and abundance. When this card appears in a reading, it signifies a time of growth and flourishing. It suggests that you are in a period of creativity and abundance in various aspects of your life. This card often relates to motherhood, but it can also symbolize the birth of new ideas, projects, or opportunities. The Empress encourages you to connect with the nurturing and creative aspects of yourself and to embrace the natural cycles of life. It's a positive sign that your endeavors will bear fruit, and you should focus on caring for and nurturing what you want to see grow." },
+            { name: "The Emperor", image: "https://drive.google.com/uc?export=view&id=1ythoj0P3Sx14z5e6MIWErCJx2wucx_wP", meaning: "Yes or No - Yes\nPoints - Authority, Structure, Leadership\nDetailed Reading - The Emperor card embodies authority, structure, and leadership. When this card appears in a reading, it suggests a need to take control and establish order in your life. It signifies a time when you should step into a position of leadership or assert your authority. The Emperor represents a strong, stable, and disciplined approach to your endeavors. It encourages you to set clear boundaries, make decisions with confidence, and take a structured approach to your goals. This card can also signify protection and a sense of security, but it reminds you to use your power wisely and responsibly, just as a good ruler would. It's a positive sign that with a strong and steady hand, you can achieve your ambitions." },
+            { name: "The Hierophant", image: "https://drive.google.com/uc?export=view&id=1dX3Qdomht2vSeHrLsB6lxypYH_45P5Ks", meaning: "Yes or No - Yes\nPoints - Tradition, Spirituality, Guidance\nDetailed Reading - The Hierophant card represents tradition, spirituality, and guidance. When this card appears in a reading, it suggests a connection to established spiritual or moral beliefs and institutions. It signifies a need for guidance, often from a spiritual or moral authority figure. The Hierophant encourages you to seek wisdom and understanding in matters of faith and ethics. It's a reminder to honor tradition and follow established principles. This card can also indicate a teacher or mentor who will provide valuable insights. While it can represent conformity and conservatism, it emphasizes the importance of learning from the past and the wisdom of those who came before. The Hierophant invites you to explore your beliefs and values and seek guidance in matters of the spirit." },
+            { name: "The Lovers", image: "https://drive.google.com/uc?export=view&id=1IGYYHVG8jIRP2UjWUUFHxaiO7v9zOLvP", meaning: "Yes or No - Yes\nPoints - Love, Choices, Union\nDetailed Reading - The Lovers card represents love, choices, and union. When this card appears in a reading, it suggests a significant connection and a choice to be made. It signifies a deep and harmonious relationship, often a romantic one, but it can also represent a strong bond with a friend or a creative partnership. The Lovers encourage you to make choices from the heart and follow your passions. It's a card of balance and union, highlighting the need to unite your inner and outer selves. This card can also symbolize moral and ethical choices and the importance of alignment with your values. The Lovers invite you to embrace love and make choices that lead to unity and fulfillment in your life." },
+            { name: "The Chariot", image: "https://drive.google.com/uc?export=view&id=18i0yB8qW4bXuZZns_tvbBRF6EOgBA3zq", meaning: "Yes or No - Yes\nPoints - Determination, Willpower, Victory\nDetailed Reading - The Chariot card represents determination, willpower, and victory. When this card appears in a reading, it signifies a time of great drive and focus. It suggests that you have a clear goal and are determined to achieve it, no matter the obstacles. The Chariot encourages you to harness your inner strength and stay committed to your path. It's a card of victory, suggesting that with hard work and a strong will, you can overcome challenges and achieve success. This card may also indicate a need to balance your ambitions with patience and self-control. The Chariot invites you to charge ahead with confidence and drive, knowing that you have the power to reach your destination." },
+            { name: "Strength", image: "https://drive.google.com/uc?export=view&id=1YXasAyttZLCO6XAviPQ5rWzrKIsEoFOt", meaning: "Yes or No - Yes\nPoints - Strength, Courage, Inner Power\nDetailed Reading - The Strength card represents strength, courage, and inner power. When this card appears in a reading, it signifies a need to tap into your inner reservoir of strength and face challenges with courage. It suggests that you possess the fortitude to overcome any obstacles in your path. The Strength card encourages you to be gentle yet firm in your approach, to have patience and use your inner power to tame the forces that may oppose you. It symbolizes a strong will and the ability to endure with grace. This card also signifies compassion and the idea that true strength comes from a place of love and understanding. It reminds you that you have the strength to not only conquer external challenges but also to master your own inner demons." },
+            //{ name: "Card 3", image: "card3.jpg", meaning: "The meaning of this card is LMN." },
+            //{ name: "Card 3", image: "card3.jpg", meaning: "The meaning of this card is LMN." },
+            // Add more card data here...
+        ];
+        // Array of image URLs to display randomly in popup ads
+        const randomImages = [
+            'https://drive.google.com/uc?export=view&id=1O4YpAI_C-Quu-9rN-clhzsfy7z2MNuTm',
+            //'dfghdf',
+            //'URL_OF_IMAGE_3',
+            // Add more image URLs as needed
+        ];
+
+        function drawCard() {
+            
+
+            const randomIndex = Math.floor(Math.random() * tarotCards.length);
+            const card = tarotCards[randomIndex];
+            
+            const cardImage = document.getElementById("card-image");
+            const cardName = document.getElementById("card-name");
+            const cardMeaning = document.getElementById("card-meaning");
+
+            cardImage.src = card.image;
+            cardName.innerText = card.name;
+            cardMeaning.innerText = card.meaning;
+
+            openPopup();
+            
+        }   
+        
+        function closePopup() {
+            const popup = document.getElementById("popup-modal");
+            popup.style.display = "none";
+        }
+        
+        function openPopup() {
+            const popup = document.getElementById("popup-modal");
+            const randomImage = document.getElementById("random-image");
+
+            // Select a random image URL
+            const randomIndex = Math.floor(Math.random() * randomImages.length);
+            const selectedImage = randomImages[randomIndex];
+
+            // Set the image source
+            randomImage.src = selectedImage;
+
+            // Display the popup
+            popup.style.display = "block";
+        }
+    </script>
+</head>
+<body>
+    <h1>Tarot Card Reading</h1>
+    <div id="tarot-card">
+        <img id="card-image" src="" alt="Tarot Card">
+        <p id="card-name"></p>        
+    </div>
+    <button onclick="drawCard()">Draw a Card</button>
+    <p id="card-meaning"></p>
+    <!-- The Popup Modal -->
+    <div id="popup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <!-- Ad content goes here -->
+            <a href="https://minekapde.com/">
+                <img id="random-image" src="" alt="Mine Kapde">
+            </a>
+        </div>
+    </div>
+</body>
+</html>
